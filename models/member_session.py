@@ -40,6 +40,10 @@ class MemberHasSession(db.Model):
         return cls.query.get(id)
 
     @classmethod
+    def get_by_member_id(cls, member_id):
+        return cls.query.filter_by(member_id=member_id).all()
+
+    @classmethod
     def delete(cls, id):
         mhc = cls.query.get(id)
         if not mhc:
@@ -55,6 +59,12 @@ class MemberHasSession(db.Model):
 
     # @classmethod
     # def update(cls, id, data):
-    #     msession = cls.query.filter(cls.id==id).first()
-    #     if msession is None;
-    #         return {'message':'Member session not found'}, HTTPStatus.NOT_FOUND
+    #     msession = cls.query.filter(cls.id == id).first()
+    #     if msession is None:
+    #         return {"message": "Member session not found"}, HTTPStatus.NOT_FOUND
+
+    #     msession.member_id = data["member_id"]
+    #     msession.session_id = data["session_id"]
+
+    #     db.session.commit()
+    #     return msession.data, HTTPStatus.OK

@@ -21,7 +21,7 @@ class SessionListResource(Resource):
             return {"message": "Member not found"}, HTTPStatus.NOT_FOUND
 
         if not member.is_trainer:
-            return {"message": "Member is not trainer"}, HTTPStatus.NOT_FOUND
+            return {"message": "Member must be trainer"}, HTTPStatus.NOT_FOUND
 
         session = Session(
             session_name=data["session_name"],
@@ -41,13 +41,30 @@ class SessionResources(Resource):
         return session.data, HTTPStatus.OK
 
     def put(self, session_id):
+        session = Session.get_by_id(session_id)
+        if session is None:
+            return {"message": "session not found"}, HTTPStatus.NOT_FOUND
+
         data = request.get_json()
         return Session.update(session_id, data)
+
+    def delete(self, session_id):
+        session = Session.get_by_id(session_id)
+        if session is None:
+            return {"message": "session not found"}, HTTPStatus.NOT_FOUND
+
+        return Session.delete(session_id)
 
 
 class SessionPublishResource(Resource):
     def put(self, session_id):
+        session = Session.get_by_id_n(session_id)
+        if session is None:
+            return {"message": "session not found"}, HTTPStatus.NOT_FOUND
         return Session.publish(session_id)
 
     def delete(self, session_id):
+        session = Session.get_by_id(session_id)
+        if session is None:
+            return {"message": "session not found"}, HTTPStatus.NOT_FOUND
         return Session.un_publish(session_id)

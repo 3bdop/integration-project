@@ -1,4 +1,5 @@
 from extensions import db
+from http import HTTPStatus
 
 
 # User Attributes
@@ -50,6 +51,36 @@ class Member(db.Model):
             result.append(i.data)
 
         return result
+
+    @classmethod
+    def update(cls, id, data):
+        member_obj = cls.query.filter(cls.id == id).first()
+        if not member_obj:
+            return {"message": "Member not found"}, HTTPStatus.NOT_FOUND
+
+        member_obj.first_name = data["first_name"]
+        member_obj.last_name = data["last_name"]
+        phone = data["phone_number"]
+        if phone:
+            member_obj.phone_number = phone
+
+        if Member.get_by_phone(phone):
+            return {"message": "Phone number already used!"}, HTTPStatus.BAD_REQUEST
+
+        member_obj.is_trainer = data["is_trainer"]
+
+        db.session.commit()
+        return member_obj.data, HTTPStatus.OK
+
+    @classmethod
+    def delete(cls, id):
+        member_obj = cls.query.filter(cls.id == id).first()
+        if not member_obj:
+            return {"message": "Member not found"}, HTTPStatus.NOT_FOUND
+
+        db.session.delete(member_obj)
+        db.session.commit()
+        return {}, HTTPStatus.NO_CONTENT
 
     # Save the record
     def save(self):

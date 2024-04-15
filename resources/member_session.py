@@ -23,11 +23,11 @@ class MemberSessionListResource(Resource):
         session_id = Session.get_by_id(session_id)
         print(session_id)
 
-        if member_id.is_trainer:
-            return {"message": "can not register a trainer"}, HTTPStatus.BAD_REQUEST
-
         if member_id is None or session_id is None:
             return {"message": "member or session does not exist"}, HTTPStatus.NOT_FOUND
+
+        if member_id.is_trainer:
+            return {"message": "can not register a trainer"}, HTTPStatus.BAD_REQUEST
 
         msession = MemberHasSession(
             member_id=data["member_id"], session_id=data["session_id"]
@@ -47,3 +47,10 @@ class MemberSessionResources(Resource):
     # def put(self, msession_id):
     #     data = request.get_json()
     #     return MemberHasSession.u
+
+    def delete(self, msession_id):
+        msession = MemberHasSession.get_by_id(msession_id)
+        if msession is None:
+            return {"message": "member session not found"}, HTTPStatus.NOT_FOUND
+
+        return MemberHasSession.delete(msession_id)

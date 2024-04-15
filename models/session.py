@@ -34,7 +34,7 @@ class Session(db.Model):
             "id": self.id,
             "session_name": self.session_name,
             "session_date": self.session_date.isoformat(),  # Convert date to ISO format for JSON serialization
-            "member": member_data,
+            "trainer": member_data,
         }
 
     def save(self):
@@ -69,6 +69,7 @@ class Session(db.Model):
 
         session_obj.session_name = data["session_name"]
         session_obj.session_date = data["session_date"]
+        session_obj.member_id = data["member_id"]
         db.session.commit()
         return session_obj.data, HTTPStatus.OK
 
